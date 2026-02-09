@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Futuristik - Basic, Scientific, Konversi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --calc-bg: #1a1a2e;
+            --display-bg: #16213e;
+            --btn-bg: #0f3460;
+            --operator-bg: #e94560;
+            --equals-bg: #00b894;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            color: #a0a0c0;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .calculator-container {
+            background-color: var(--calc-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mode-selector {
+            display: flex;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            background-color: transparent;
+            color: #a0a0c0;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0 5px;
+        }
+
+        .mode-btn:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .mode-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .display-container {
+            padding: 25px;
+            background-color: var(--display-bg);
+            position: relative;
+        }
+
+        .display-history {
+            min-height: 30px;
+            font-size: 1rem;
+            color: #a0a0c0;
+            text-align: right;
+            margin-bottom: 10px;
+            overflow: hidden;
+            word-break: break-all;
+        }
+
+        .display {
+            font-size: 2.8rem;
+            text-align: right;
+            overflow: hidden;
+            word-break: break-all;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-weight: 300;
+        }
+
+        .buttons-container {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .button {
+            background-color: var(--btn-bg);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            font-weight: 500;
+            height: 70px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .operator {
+            background-color: var(--operator-bg);
+            font-weight: 600;
+        }
+
+        .equals {
+            background-color: var(--equals-bg);
+            font-weight: 600;
+        }
+
+        .function {
+            background-color: #9b59b6;
+        }
+
+        .clear {
+            background-color: #e74c3c;
+        }
+
+        .memory {
+            background-color: #f39c12;
+        }
+
+        .zero {
+            grid-column: span 2;
+        }
+
+        .info-panel {
+            background-color: rgba(26, 26, 46, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .conversion-section {
+            margin-bottom: 30px;
+        }
+
+        .conversion-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #a0a0c0;
+        }
+
+        .conversion-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .conversion-input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .conversion-input label {
+            display: block;
+            margin-bottom: 8px;
+            color: #a0a0c0;
+            font-size: 0.9rem;
+        }
+
+        .conversion-input input, .conversion-input select {
+            width: 100%;
+            padding: 14px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .conversion-input input:focus, .conversion-input select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .conversion-result {
+            background-color: rgba(0, 184, 148, 0.1);
+            border: 1px solid rgba(0, 184, 148, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        .result-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #00b894;
+            margin-bottom: 5px;
+        }
+
+        .result-label {
+            color: #a0a0c0;
+            font-size: 0.9rem;
+        }
+
+        .memory-section {
+            background-color: rgba(52, 152, 219, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .memory-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .memory-btn {
+            padding: 10px 15px;
+            background-color: rgba(52, 152, 219, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            color: #3498db;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .memory-btn:hover {
+            background-color: rgba(52, 152, 219, 0.3);
+        }
+
+        .memory-display {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 60px;
+            font-size: 0.9rem;
+            color: #a0a0c0;
+        }
+
+        .memory-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .memory-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-section {
+            background-color: rgba(46, 204, 113, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .history-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .clear-history {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .clear-history:hover {
+            background-color: rgba(231, 76, 60, 0.3);
+        }
+
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-expression {
+            color: #a0a0c0;
+        }
+
+        .history-result {
+            color: #2ecc71;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: #a0a0c0;
+            font-size: 0.9rem;
+            width: 100%;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .display {
+                font-size: 2.2rem;
+            }
+            
+            .button {
+                height: 60px;
+                font-size: 1.2rem;
+            }
+            
+            .buttons-container {
+                gap: 10px;
+                padding: 15px;
+            }
+            
+            .main-content {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .button {
+                height: 55px;
+                font-size: 1.1rem;
+            }
+            
+            .buttons-container {
+                gap: 8px;
+                padding: 10px;
+            }
+            
+            .mode-btn {
+                padding: 10px 5px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Scientific buttons styling */
+        .scientific-buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .scientific-btn {
+            background-color: #34495e;
+            font-size: 1rem;
+            height: 50px;
+        }
+
+        /* Hide/show sections based on mode */
+        .basic-mode .scientific-buttons,
+        .basic-mode .programmer-buttons {
+            display: none;
+        }
+
+        .scientific-mode .programmer-buttons,
+        .conversion-mode .buttons-container,
+        .conversion-mode .scientific-buttons,
+        .conversion-mode .programmer-buttons {
+            display: none;
+        }
+
+        .programmer-mode .scientific-buttons {
+            display: none;
+        }
+
+        /* Programmer buttons styling */
+        .programmer-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .programmer-btn {
+            background-color: #16a085;
+            font-size: 1rem;
+            height: 50px;
+        }
+
+        .bit-buttons {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+            margin-top: 15px;
+        }
+
+        .bit-btn {
+            background-color: #8e44ad;
+            font-size: 0.9rem;
+            height: 40px;
+        }
+
+        .bit-btn.active {
+            background-color: #9b59b6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> Kalkulator Futuristik</h1>
+            <p class="subtitle">Kalkulator dengan berbagai mode: Basic, Scientific, Programmer, dan Konversi Satuan</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Kalkulator Section -->
+            <div class="calculator-container">
+                <div class="mode-selector">
+                    <button class="mode-btn active" data-mode="basic">
+                        <i class="fas fa-calculator"></i> Basic
+                    </button>
+                    <button class="mode-btn" data-mode="scientific">
+                        <i class="fas fa-square-root-alt"></i> Scientific
+                    </button>
+                    <button class="mode-btn" data-mode="programmer">
+                        <i class="fas fa-microchip"></i> Programmer
+                    </button>
+                    <button class="mode-btn" data-mode="conversion">
+                        <i class="fas fa-exchange-alt"></i> Konversi
+                    </button>
+                </div>
+
+                <div class="display-container">
+                    <div class="display-history" id="historyDisplay"></div>
+                    <div class="display" id="display">0</div>
+                </div>
+
+                <!-- Basic Calculator Buttons -->
+                <div class="buttons-container">
+                    <button class="button memory" data-action="mc">MC</button>
+                    <button class="button memory" data-action="mr">MR</button>
+                    <button class="button memory" data-action="m+">M+</button>
+                    <button class="button memory" data-action="m-">M-</button>
+                    
+                    <button class="button clear" data-action="clear">C</button>
+                    <button class="button clear" data-action="clear-entry">CE</button>
+                    <button class="button operator" data-action="backspace">⌫</button>
+                    <button class="button operator" data-action="/">÷</button>
+                    
+                    <button class="button" data-number="7">7</button>
+                    <button class="button" data-number="8">8</button>
+                    <button class="button" data-number="9">9</button>
+                    <button class="button operator" data-action="*">×</button>
+                    
+                    <button class="button" data-number="4">4</button>
+                    <button class="button" data-number="5">5</button>
+                    <button class="button" data-number="6">6</button>
+                    <button class="button operator" data-action="-">−</button>
+                    
+                    <button class="button" data-number="1">1</button>
+                    <button class="button" data-number="2">2</button>
+                    <button class="button" data-number="3">3</button>
+                    <button class="button operator" data-action="+">+</button>
+                    
+                    <button class="button" data-action="+/-">±</button>
+                    <button class="button" data-number="0">0</button>
+                    <button class="button" data-action=".">.</button>
+                    <button class="button equals" data-action="=">=</button>
+                </div>
+
+                <!-- Scientific Buttons -->
+                <div class="scientific-buttons">
+                    <button class="button scientific-btn" data-action="sin">sin</button>
+                    <button class="button scientific-btn" data-action="cos">cos</button>
+                    <button class="button scientific-btn" data-action="tan">tan</button>
+                    <button class="button scientific-btn" data-action="log">log</button>
+                    <button class="button scientific-btn" data-action="ln">ln</button>
+                    
+                    <button class="button scientific-btn" data-action="sin⁻¹">sin⁻¹</button>
+                    <button class="button scientific-btn" data-action="cos⁻¹">cos⁻¹</button>
+                    <button class="button scientific-btn" data-action="tan⁻¹">tan⁻¹</button>
+                    <button class="button scientific-btn" data-action="log10">log₁₀</button>
+                    <button class="button scientific-btn" data-action="exp">eˣ</button>
+                    
+                    <button class="button scientific-btn" data-action="x²">x²</button>
+                    <button class="button scientific-btn" data-action="x³">x³</button>
+                    <button class="button scientific-btn" data-action="xʸ">xʸ</button>
+                    <button class="button scientific-btn" data-action="√">√</button>
+                    <button class="button scientific-btn" data-action="∛">∛</button>
+                    
+                    <button class="button scientific-btn" data-action="π">π</button>
+                    <button class="button scientific-btn" data-action="e">e</button>
+                    <button class="button scientific-btn" data-action="fact">x!</button>
+                    <button class="button scientific-btn" data-action="mod">mod</button>
+                    <button class="button scientific-btn" data-action="1/x">1/x</button>
+                </div>
+
+                <!-- Programmer Buttons -->
+                <div class="programmer-buttons">
+                    <button class="button programmer-btn" data-action="hex">HEX</button>
+                    <button class="button programmer-btn" data-action="dec">DEC</button>
+                    <button class="button programmer-btn" data-action="oct">OCT</button>
+                    <button class="button programmer-btn" data-action="bin">BIN</button>
+                    
+                    <button class="button programmer-btn" data-action="and">AND</button>
+                    <button class="button programmer-btn" data-action="or">OR</button>
+                    <button class="button programmer-btn" data-action="xor">XOR</button>
+                    <button class="button programmer-btn" data-action="not">NOT</button>
+                    
+                    <button class="button programmer-btn" data-action="lsh">Lsh</button>
+                    <button class="button programmer-btn" data-action="rsh">Rsh</button>
+                    <button class="button programmer-btn" data-action="nand">NAND</button>
+                    <button class="button programmer-btn" data-action="nor">NOR</button>
+                </div>
+
+                <!-- Bit Buttons (for binary editing) -->
+                <div class="bit-buttons">
+                    <!-- Bits will be generated dynamically -->
+                </div>
+            </div>
+
+            <!-- Info & Conversion Panel -->
+            <div class="info-panel">
+                <div class="panel-title">
+                    <i class="fas fa-exchange-alt"></i> Konversi Satuan
+                </div>
+                
+                <div class="conversion-section">
+                    <div class="conversion-title">Konversi Panjang</div>
+                    <div class="conversion-controls">
+                        <div class="conversion-input">
+                            <label>Dari:</label>
+                            <input type="number" id="lengthInput" value="1" step="any">
+                        </div>
+                        <div class="conversion-input">
+                            <label>Satuan Asal:</label>
+                            <select id="lengthFrom">
+                                <option value="meter">Meter (m)</option>
+                                <option value="kilometer">Kilometer (km)</option>
+                                <option value="centimeter">Sentimeter (cm)</option>
+                                <option value="millimeter">Milimeter (mm)</option>
+                                <option value="mile">Mil (mi)</option>
+                                <option value="yard">Yard (yd)</option>
+                                <option value="foot">Kaki (ft)</option>
+                                <option value="inch">Inci (in)</option>
+                            </select>
+                        </div>
+                        <div class="conversion-input">
+                            <label>Satuan Tujuan:</label>
+                            <select id="lengthTo">
+                                <option value="kilometer">Kilometer (km)</option>
+                                <option value="meter">Meter (m)</option>
+                                <option value="centimeter">Sentimeter (cm)</option>
+                                <option value="millimeter">Milimeter (mm)</option>
+                                <option value="mile">Mil (mi)</option>
+                                <option value="yard">Yard (yd)</option>
+                                <option value="foot">Kaki (ft)</option>
+                                <option value="inch">Inci (in)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="conversion-result">
+                        <div class="result-value" id="lengthResult">1 m = 0.001 km</div>
+                        <div class="result-label" id="lengthLabel">Konversi Panjang</div>
+                    </div>
+                </div>
+
+                <div class="conversion-section">
+                    <div class="conversion-title">Konversi Suhu</div>
+                    <div class="conversion-controls">
+                        <div class="conversion-input">
+                            <label>Suhu:</label>
+                            <input type="number" id="tempInput" value="0" step="any">
+                        </div>
+                        <div class="conversion-input">
+                            <label>Dari:</label>
+                            <select id="tempFrom">
+                                <option value="celsius">Celsius (°C)</option>
+                                <option value="fahrenheit">Fahrenheit (°F)</option>
+                                <option value="kelvin">Kelvin (K)</option>
+                            </select>
+                        </div>
+                        <div class="conversion-input">
+                            <label>Ke:</label>
+                            <select id="tempTo">
+                                <option value="fahrenheit">Fahrenheit (°F)</option>
+                                <option value="celsius">Celsius (°C)</option>
+                                <option value="kelvin">Kelvin (K)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="conversion-result">
+                        <div class="result-value" id="tempResult">0 °C = 32 °F</div>
+                        <div class="result-label" id="tempLabel">Konversi Suhu</div>
+                    </div>
+                </div>
+
+                <div class="memory-section">
+                    <div class="panel-title">
+                        <i class="fas fa-memory"></i> Memori Kalkulator
+                    </div>
+                    <div class="memory-controls">
+                        <button class="memory-btn" id="memClear">MC (Clear)</button>
+                        <button class="memory-btn" id="memRecall">MR (Recall)</button>
+                        <button class="memory-btn" id="memAdd">M+ (Add)</button>
+                        <button class="memory-btn" id="memSubtract">M- (Subtract)</button>
+                        <button class="memory-btn" id="memStore">MS (Store)</button>
+                    </div>
+                    <div class="memory-display" id="memoryDisplay">
+                        <div class="memory-item">
+                            <span>Memori Saat Ini:</span>
+                            <span id="currentMemory">0</span>
+                        </div>
+                        <div class="memory-item">
+                            <span>Status:</span>
+                            <span id="memoryStatus">Kosong</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="history-section">
+                    <div class="history-title">
+                        <div class="panel-title">
+                            <i class="fas fa-history"></i> Riwayat Perhitungan
+                        </div>
+                        <button class="clear-history" id="clearHistory">Hapus Riwayat</button>
+                    </div>
+                    <div class="history-list" id="historyList">
+                        <!-- History items will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Kalkulator Futuristik | Mode: Basic, Scientific, Programmer, Konversi</p>
+            <p>DIBUAT OLEH</p>
+            <p>RISTANIA NUR KHANIVA, NOVA APRILLIA, SUWANTI | SMK MA'ARIF PARE</p>
+            <p>Gunakan keyboard untuk input cepat: angka, operator (+, -, *, /), Enter (=), Escape (C)</p>
+        </div>
+    </div>
+
+    <script>
+        // Calculator State
+        let currentMode = 'basic';
+        let currentDisplay = '0';
+        let previousValue = null;
+        let currentOperator = null;
+        let waitingForNewValue = false;
+        let memoryValue = 0;
+        let memoryStored = false;
+        let calculationHistory = [];
+        let isDegreeMode = true; // true for degrees, false for radians
+        let currentNumberSystem = 'dec'; // dec, hex, oct, bin
+        let bitValues = Array(8).fill(0); // For programmer mode bits
+
+        // DOM Elements
+        const display = document.getElementById('display');
+        const historyDisplay = document.getElementById('historyDisplay');
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        const buttons = document.querySelectorAll('.button');
+        const historyList = document.getElementById('historyList');
+        const clearHistoryBtn = document.getElementById('clearHistory');
+        
+        // Conversion elements
+        const lengthInput = document.getElementById('lengthInput');
+        const lengthFrom = document.getElementById('lengthFrom');
+        const lengthTo = document.getElementById('lengthTo');
+        const lengthResult = document.getElementById('lengthResult');
+        const lengthLabel = document.getElementById('lengthLabel');
+        
+        const tempInput = document.getElementById('tempInput');
+        const tempFrom = document.getElementById('tempFrom');
+        const tempTo = document.getElementById('tempTo');
+        const tempResult = document.getElementById('tempResult');
+        const tempLabel = document.getElementById('tempLabel');
+        
+        // Memory elements
+        const memClearBtn = document.getElementById('memClear');
+        const memRecallBtn = document.getElementById('memRecall');
+        const memAddBtn = document.getElementById('memAdd');
+        const memSubtractBtn = document.getElementById('memSubtract');
+        const memStoreBtn = document.getElementById('memStore');
+        const currentMemory = document.getElementById('currentMemory');
+        const memoryStatus = document.getElementById('memoryStatus');
+
+        // Initialize calculator
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromLocalStorage();
+            updateDisplay();
+            setupEventListeners();
+            updateConversion();
+            updateMemoryDisplay();
+            updateHistoryList();
+            updateCalculatorMode();
+            
+            // Setup bit buttons for programmer mode
+            setupBitButtons();
+        });
+
+        function setupEventListeners() {
+            // Mode buttons
+            modeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const mode = this.getAttribute('data-mode');
+                    switchMode(mode);
+                });
+            });
+
+            // Calculator buttons
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const number = this.getAttribute('data-number');
+                    const action = this.getAttribute('data-action');
+                    
+                    if (number !== null) {
+                        inputNumber(number);
+                    } else if (action !== null) {
+                        handleAction(action);
+                    }
+                });
+            });
+
+            // Keyboard support
+            document.addEventListener('keydown', handleKeyboardInput);
+
+            // Conversion inputs
+            [lengthInput, lengthFrom, lengthTo].forEach(element => {
+                element.addEventListener('input', updateLengthConversion);
+            });
+            
+            [tempInput, tempFrom, tempTo].forEach(element => {
+                element.addEventListener('input', updateTemperatureConversion);
+            });
+
+            // Memory buttons
+            memClearBtn.addEventListener('click', () => memoryClear());
+            memRecallBtn.addEventListener('click', () => memoryRecall());
+            memAddBtn.addEventListener('click', () => memoryAdd());
+            memSubtractBtn.addEventListener('click', () => memorySubtract());
+            memStoreBtn.addEventListener('click', () => memoryStore());
+
+            // History button
+            clearHistoryBtn.addEventListener('click', clearHistory);
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            // Update mode buttons
+            modeButtons.forEach(button => {
+                if (button.getAttribute('data-mode') === mode) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+            
+            // Update calculator UI based on mode
+            updateCalculatorMode();
+            
+            // Reset display for new mode if needed
+            if (mode === 'programmer') {
+                switchToDecimal();
+                updateBitDisplay();
+            } else if (mode === 'conversion') {
+                // Update conversions when switching to conversion mode
+                updateConversion();
+            } else {
+                // Reset to basic display for other modes
+                resetCalculator();
+            }
+        }
+
+        function updateCalculatorMode() {
+            const calculator = document.querySelector('.calculator-container');
+            
+            // Remove all mode classes
+            calculator.classList.remove('basic-mode', 'scientific-mode', 'programmer-mode', 'conversion-mode');
+            
+            // Add current mode class
+            calculator.classList.add(`${currentMode}-mode`);
+            
+            // Update display for programmer mode
+            if (currentMode === 'programmer') {
+                updateNumberSystemDisplay();
+            }
+        }
+
+        function inputNumber(number) {
+            if (currentMode === 'programmer') {
+                inputNumberProgrammer(number);
+                return;
+            }
+            
+            if (waitingForNewValue) {
+                currentDisplay = number;
+                waitingForNewValue = false;
+            } else {
+                currentDisplay = currentDisplay === '0' ? number : currentDisplay + number;
+            }
+            
+            updateDisplay();
+        }
+
+        function inputNumberProgrammer(number) {
+            // Handle number input based on current number system
+            let maxDigit;
+            switch(currentNumberSystem) {
+                case 'dec':
+                    maxDigit = 9;
+                    if (number > maxDigit) return;
+                    break;
+                case 'hex':
+                    maxDigit = 15;
+                    // Allow A-F for hex
+                    const hexDigits = '0123456789ABCDEF';
+                    if (!hexDigits.includes(number.toUpperCase())) return;
+                    break;
+                case 'oct':
+                    maxDigit = 7;
+                    if (number > maxDigit) return;
+                    break;
+                case 'bin':
+                    maxDigit = 1;
+                    if (number > maxDigit) return;
+                    break;
+            }
+            
+            if (waitingForNewValue) {
+                currentDisplay = number;
+                waitingForNewValue = false;
+            } else {
+                currentDisplay = currentDisplay === '0' ? number : currentDisplay + number;
+            }
+            
+            updateDisplay();
+            updateBitValues();
+        }
+
+        function handleAction(action) {
+            switch(action) {
+                // Basic operations
+                case 'clear':
+                    clearAll();
+                    break;
+                case 'clear-entry':
+                    clearEntry();
+                    break;
+                case 'backspace':
+                    backspace();
+                    break;
+                case '+/-':
+                    toggleSign();
+                    break;
+                case '.':
+                    inputDecimal();
+                    break;
+                case '=':
+                    calculateResult();
+                    break;
+                    
+                // Basic operators
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    handleOperator(action);
+                    break;
+                    
+                // Scientific functions
+                case 'sin':
+                    calculateScientific('sin');
+                    break;
+                case 'cos':
+                    calculateScientific('cos');
+                    break;
+                case 'tan':
+                    calculateScientific('tan');
+                    break;
+                case 'sin⁻¹':
+                    calculateScientific('asin');
+                    break;
+                case 'cos⁻¹':
+                    calculateScientific('acos');
+                    break;
+                case 'tan⁻¹':
+                    calculateScientific('atan');
+                    break;
+                case 'log':
+                    calculateScientific('log');
+                    break;
+                case 'ln':
+                    calculateScientific('ln');
+                    break;
+                case 'log10':
+                    calculateScientific('log10');
+                    break;
+                case 'exp':
+                    calculateScientific('exp');
+                    break;
+                case 'x²':
+                    calculateScientific('square');
+                    break;
+                case 'x³':
+                    calculateScientific('cube');
+                    break;
+                case 'xʸ':
+                    handleOperator('^');
+                    break;
+                case '√':
+                    calculateScientific('sqrt');
+                    break;
+                case '∛':
+                    calculateScientific('cbrt');
+                    break;
+                case 'π':
+                    inputPi();
+                    break;
+                case 'e':
+                    inputE();
+                    break;
+                case 'fact':
+                    calculateScientific('factorial');
+                    break;
+                case 'mod':
+                    handleOperator('%');
+                    break;
+                case '1/x':
+                    calculateScientific('reciprocal');
+                    break;
+                    
+                // Memory functions
+                case 'mc':
+                    memoryClear();
+                    break;
+                case 'mr':
+                    memoryRecall();
+                    break;
+                case 'm+':
+                    memoryAdd();
+                    break;
+                case 'm-':
+                    memorySubtract();
+                    break;
+                    
+                // Programmer functions
+                case 'hex':
+                    switchToHex();
+                    break;
+                case 'dec':
+                    switchToDecimal();
+                    break;
+                case 'oct':
+                    switchToOctal();
+                    break;
+                case 'bin':
+                    switchToBinary();
+                    break;
+                case 'and':
+                    handleOperator('&');
+                    break;
+                case 'or':
+                    handleOperator('|');
+                    break;
+                case 'xor':
+                    handleOperator('^');
+                    break;
+                case 'not':
+                    calculateScientific('not');
+                    break;
+                case 'lsh':
+                    calculateScientific('lsh');
+                    break;
+                case 'rsh':
+                    calculateScientific('rsh');
+                    break;
+                case 'nand':
+                    calculateScientific('nand');
+                    break;
+                case 'nor':
+                    calculateScientific('nor');
+                    break;
+            }
+        }
+
+        function handleKeyboardInput(e) {
+            const key = e.key;
+            
+            // Prevent default for calculator keys
+            if (/[\d+\-*/.=]|Enter|Escape|Backspace/.test(key)) {
+                e.preventDefault();
+            }
+            
+            // Numbers
+            if (/\d/.test(key)) {
+                inputNumber(key);
+            }
+            
+            // Operators
+            if (['+', '-', '*', '/', '%', '^', '&', '|'].includes(key)) {
+                handleOperator(key);
+            }
+            
+            // Decimal point
+            if (key === '.' || key === ',') {
+                inputDecimal();
+            }
+            
+            // Equals
+            if (key === '=' || key === 'Enter') {
+                calculateResult();
+            }
+            
+            // Clear
+            if (key === 'Escape' || key === 'Delete') {
+                clearAll();
+            }
+            
+            // Backspace
+            if (key === 'Backspace') {
+                backspace();
+            }
+            
+            // Toggle sign
+            if (key === '_' || (e.shiftKey && key === '-')) {
+                toggleSign();
+            }
+            
+            // Memory functions
+            if (e.ctrlKey) {
+                switch(key.toLowerCase()) {
+                    case 'm':
+                        memoryStore();
+                        break;
+                    case 'r':
+                        memoryRecall();
+                        break;
+                    case 'l':
+                        memoryClear();
+                        break;
+                }
+            }
+        }
+
+        function clearAll() {
+            currentDisplay = '0';
+            previousValue = null;
+            currentOperator = null;
+            waitingForNewValue = false;
+            updateDisplay();
+            historyDisplay.textContent = '';
+        }
+
+        function clearEntry() {
+            currentDisplay = '0';
+            updateDisplay();
+        }
+
+        function backspace() {
+            if (currentDisplay.length === 1) {
+                currentDisplay = '0';
+            } else {
+                currentDisplay = currentDisplay.slice(0, -1);
+            }
+            updateDisplay();
+        }
+
+        function toggleSign() {
+            if (currentDisplay !== '0') {
+                if (currentDisplay.startsWith('-')) {
+                    currentDisplay = currentDisplay.substring(1);
+                } else {
+                    currentDisplay = '-' + currentDisplay;
+                }
+                updateDisplay();
+            }
+        }
+
+        function inputDecimal() {
+            if (waitingForNewValue) {
+                currentDisplay = '0.';
+                waitingForNewValue = false;
+            } else if (!currentDisplay.includes('.')) {
+                currentDisplay += '.';
+            }
+            updateDisplay();
+        }
+
+        function handleOperator(operator) {
+            const inputValue = parseFloat(currentDisplay);
+            
+            if (previousValue === null) {
+                previousValue = inputValue;
+            } else if (currentOperator) {
+                const result = calculate(previousValue, inputValue, currentOperator);
+                currentDisplay = String(result);
+                previousValue = result;
+                updateDisplay();
+            }
+            
+            waitingForNewValue = true;
+            currentOperator = operator;
+            historyDisplay.textContent = `${previousValue} ${getOperatorSymbol(operator)}`;
+        }
+
+        function calculateResult() {
+            const inputValue = parseFloat(currentDisplay);
+            
+            if (previousValue !== null && currentOperator) {
+                const result = calculate(previousValue, inputValue, currentOperator);
+                currentDisplay = String(result);
+                
+                // Add to history
+                addToHistory(`${previousValue} ${getOperatorSymbol(currentOperator)} ${inputValue} = ${result}`);
+                
+                // Reset for next calculation
+                previousValue = null;
+                currentOperator = null;
+                waitingForNewValue = true;
+                
+                updateDisplay();
+                historyDisplay.textContent = '';
+            }
+        }
+
+        function calculate(a, b, operator) {
+            switch(operator) {
+                case '+':
+                    return a + b;
+                case '-':
+                    return a - b;
+                case '*':
+                    return a * b;
+                case '/':
+                    return b !== 0 ? a / b : 'Error';
+                case '%':
+                    return a % b;
+                case '^':
+                    return Math.pow(a, b);
+                case '&':
+                    return Math.floor(a) & Math.floor(b);
+                case '|':
+                    return Math.floor(a) | Math.floor(b);
+                default:
+                    return b;
+            }
+        }
+
+        function calculateScientific(func) {
+            const value = parseFloat(currentDisplay);
+            let result;
+            
+            switch(func) {
+                case 'sin':
+                    result = isDegreeMode ? Math.sin(value * Math.PI / 180) : Math.sin(value);
+                    break;
+                case 'cos':
+                    result = isDegreeMode ? Math.cos(value * Math.PI / 180) : Math.cos(value);
+                    break;
+                case 'tan':
+                    result = isDegreeMode ? Math.tan(value * Math.PI / 180) : Math.tan(value);
+                    break;
+                case 'asin':
+                    result = isDegreeMode ? Math.asin(value) * 180 / Math.PI : Math.asin(value);
+                    break;
+                case 'acos':
+                    result = isDegreeMode ? Math.acos(value) * 180 / Math.PI : Math.acos(value);
+                    break;
+                case 'atan':
+                    result = isDegreeMode ? Math.atan(value) * 180 / Math.PI : Math.atan(value);
+                    break;
+                case 'log':
+                    result = value > 0 ? Math.log10(value) : 'Error';
+                    break;
+                case 'ln':
+                    result = value > 0 ? Math.log(value) : 'Error';
+                    break;
+                case 'log10':
+                    result = value > 0 ? Math.log10(value) : 'Error';
+                    break;
+                case 'exp':
+                    result = Math.exp(value);
+                    break;
+                case 'square':
+                    result = value * value;
+                    break;
+                case 'cube':
+                    result = value * value * value;
+                    break;
+                case 'sqrt':
+                    result = value >= 0 ? Math.sqrt(value) : 'Error';
+                    break;
+                case 'cbrt':
+                    result = Math.cbrt(value);
+                    break;
+                case 'factorial':
+                    result = factorial(value);
+                    break;
+                case 'reciprocal':
+                    result = value !== 0 ? 1 / value : 'Error';
+                    break;
+                case 'not':
+                    result = ~Math.floor(value);
+                    break;
+                case 'lsh':
+                    result = Math.floor(value) << 1;
+                    break;
+                case 'rsh':
+                    result = Math.floor(value) >> 1;
+                    break;
+                case 'nand':
+                    result = ~(Math.floor(value) & Math.floor(previousValue || value));
+                    break;
+                case 'nor':
+                    result = ~(Math.floor(value) | Math.floor(previousValue || value));
+                    break;
+            }
+            
+            if (result !== 'Error') {
+                addToHistory(`${func}(${value}) = ${result}`);
+                currentDisplay = String(result);
+                updateDisplay();
+                waitingForNewValue = true;
+            } else {
+                currentDisplay = 'Error';
+                updateDisplay();
+                setTimeout(() => {
+                    currentDisplay = '0';
+                    updateDisplay();
+                }, 1500);
+            }
+        }
+
+        function factorial(n) {
+            if (n < 0 || !Number.isInteger(n)) return 'Error';
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        }
+
+        function inputPi() {
+            currentDisplay = String(Math.PI);
+            updateDisplay();
+            waitingForNewValue = true;
+        }
+
+        function inputE() {
+            currentDisplay = String(Math.E);
+            updateDisplay();
+            waitingForNewValue = true;
+        }
+
+        function getOperatorSymbol(operator) {
+            const symbols = {
+                '+': '+',
+                '-': '−',
+                '*': '×',
+                '/': '÷',
+                '%': 'mod',
+                '^': '^',
+                '&': 'AND',
+                '|': 'OR'
+            };
+            return symbols[operator] || operator;
+        }
+
+        function updateDisplay() {
+            // Format display based on current mode
+            let displayValue = currentDisplay;
+            
+            if (currentMode === 'programmer') {
+                displayValue = convertToCurrentSystem(parseFloat(currentDisplay) || 0);
+            }
+            
+            // Add thousands separators for decimal numbers
+            if (currentMode !== 'programmer' && currentDisplay !== 'Error') {
+                const num = parseFloat(currentDisplay);
+                if (!isNaN(num)) {
+                    displayValue = num.toLocaleString('en-US', {
+                        maximumFractionDigits: 10
+                    });
+                }
+            }
+            
+            display.textContent = displayValue;
+        }
+
+        function addToHistory(expression) {
+            calculationHistory.unshift({
+                expression: expression,
+                timestamp: new Date().toLocaleTimeString()
+            });
+            
+            // Keep only last 10 items
+            if (calculationHistory.length > 10) {
+                calculationHistory.pop();
+            }
+            
+            updateHistoryList();
+            saveToLocalStorage();
+        }
+
+        function updateHistoryList() {
+            historyList.innerHTML = '';
+            
+            if (calculationHistory.length === 0) {
+                historyList.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">Belum ada riwayat perhitungan</div>';
+                return;
+            }
+            
+            calculationHistory.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-expression">${item.expression}</div>
+                    <div class="history-result">${item.timestamp}</div>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        function clearHistory() {
+            calculationHistory = [];
+            updateHistoryList();
+            saveToLocalStorage();
+        }
+
+        // Memory Functions
+        function memoryClear() {
+            memoryValue = 0;
+            memoryStored = false;
+            updateMemoryDisplay();
+        }
+
+        function memoryRecall() {
+            currentDisplay = String(memoryValue);
+            updateDisplay();
+            waitingForNewValue = true;
+        }
+
+        function memoryAdd() {
+            const currentValue = parseFloat(currentDisplay) || 0;
+            memoryValue += currentValue;
+            memoryStored = true;
+            updateMemoryDisplay();
+            addToHistory(`M+ ${currentValue} = ${memoryValue}`);
+        }
+
+        function memorySubtract() {
+            const currentValue = parseFloat(currentDisplay) || 0;
+            memoryValue -= currentValue;
+            memoryStored = true;
+            updateMemoryDisplay();
+            addToHistory(`M- ${currentValue} = ${memoryValue}`);
+        }
+
+        function memoryStore() {
+            const currentValue = parseFloat(currentDisplay) || 0;
+            memoryValue = currentValue;
+            memoryStored = true;
+            updateMemoryDisplay();
+            addToHistory(`MS ${currentValue}`);
+        }
+
+        function updateMemoryDisplay() {
+            currentMemory.textContent = memoryValue;
+            memoryStatus.textContent = memoryStored ? 'Terisi' : 'Kosong';
+        }
+
+        // Programmer Mode Functions
+        function switchToHex() {
+            currentNumberSystem = 'hex';
+            updateNumberSystemDisplay();
+            updateBitDisplay();
+        }
+
+        function switchToDecimal() {
+            currentNumberSystem = 'dec';
+            updateNumberSystemDisplay();
+            updateBitDisplay();
+        }
+
+        function switchToOctal() {
+            currentNumberSystem = 'oct';
+            updateNumberSystemDisplay();
+            updateBitDisplay();
+        }
+
+        function switchToBinary() {
+            currentNumberSystem = 'bin';
+            updateNumberSystemDisplay();
+            updateBitDisplay();
+        }
+
+        function updateNumberSystemDisplay() {
+            // Update display based on current number system
+            updateDisplay();
+        }
+
+        function convertToCurrentSystem(value) {
+            const intValue = Math.floor(value);
+            
+            switch(currentNumberSystem) {
+                case 'hex':
+                    return intValue.toString(16).toUpperCase();
+                case 'dec':
+                    return intValue.toString(10);
+                case 'oct':
+                    return intValue.toString(8);
+                case 'bin':
+                    return intValue.toString(2);
+                default:
+                    return intValue.toString(10);
+            }
+        }
+
+        function setupBitButtons() {
+            const bitButtonsContainer = document.querySelector('.bit-buttons');
+            bitButtonsContainer.innerHTML = '';
+            
+            for (let i = 7; i >= 0; i--) {
+                const bitButton = document.createElement('button');
+                bitButton.className = 'bit-btn';
+                bitButton.textContent = i;
+                bitButton.setAttribute('data-bit', i);
+                bitButton.addEventListener('click', function() {
+                    toggleBit(i);
+                });
+                bitButtonsContainer.appendChild(bitButton);
+            }
+        }
+
+        function toggleBit(bitIndex) {
+            bitValues[bitIndex] = bitValues[bitIndex] === 0 ? 1 : 0;
+            updateBitDisplay();
+            updateDisplayFromBits();
+        }
+
+        function updateBitDisplay() {
+            const bitButtons = document.querySelectorAll('.bit-btn');
+            bitButtons.forEach((button, index) => {
+                const bitIndex = 7 - index; // Reverse order
+                if (bitValues[bitIndex] === 1) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+
+        function updateBitValues() {
+            const value = parseInt(currentDisplay) || 0;
+            const binaryStr = value.toString(2).padStart(8, '0');
+            
+            for (let i = 0; i < 8; i++) {
+                bitValues[i] = parseInt(binaryStr[7 - i]) || 0;
+            }
+            
+            updateBitDisplay();
+        }
+
+        function updateDisplayFromBits() {
+            const binaryStr = bitValues.reverse().join('');
+            const decimalValue = parseInt(binaryStr, 2);
+            currentDisplay = String(decimalValue);
+            updateDisplay();
+        }
+
+        // Conversion Functions
+        function updateConversion() {
+            updateLengthConversion();
+            updateTemperatureConversion();
+        }
+
+        function updateLengthConversion() {
+            const value = parseFloat(lengthInput.value) || 0;
+            const fromUnit = lengthFrom.value;
+            const toUnit = lengthTo.value;
+            
+            // Convert to meters first
+            let valueInMeters = value;
+            
+            switch(fromUnit) {
+                case 'kilometer':
+                    valueInMeters = value * 1000;
+                    break;
+                case 'centimeter':
+                    valueInMeters = value / 100;
+                    break;
+                case 'millimeter':
+                    valueInMeters = value / 1000;
+                    break;
+                case 'mile':
+                    valueInMeters = value * 1609.34;
+                    break;
+                case 'yard':
+                    valueInMeters = value * 0.9144;
+                    break;
+                case 'foot':
+                    valueInMeters = value * 0.3048;
+                    break;
+                case 'inch':
+                    valueInMeters = value * 0.0254;
+                    break;
+            }
+            
+            // Convert from meters to target unit
+            let result = valueInMeters;
+            
+            switch(toUnit) {
+                case 'kilometer':
+                    result = valueInMeters / 1000;
+                    break;
+                case 'centimeter':
+                    result = valueInMeters * 100;
+                    break;
+                case 'millimeter':
+                    result = valueInMeters * 1000;
+                    break;
+                case 'mile':
+                    result = valueInMeters / 1609.34;
+                    break;
+                case 'yard':
+                    result = valueInMeters / 0.9144;
+                    break;
+                case 'foot':
+                    result = valueInMeters / 0.3048;
+                    break;
+                case 'inch':
+                    result = valueInMeters / 0.0254;
+                    break;
+            }
+            
+            const fromLabel = getUnitLabel(fromUnit);
+            const toLabel = getUnitLabel(toUnit);
+            
+            lengthResult.textContent = `${value} ${fromLabel} = ${result.toFixed(6)} ${toLabel}`;
+            lengthLabel.textContent = `Konversi ${fromLabel} ke ${toLabel}`;
+        }
+
+        function updateTemperatureConversion() {
+            const value = parseFloat(tempInput.value) || 0;
+            const fromUnit = tempFrom.value;
+            const toUnit = tempTo.value;
+            
+            // Convert to Celsius first
+            let valueInCelsius = value;
+            
+            switch(fromUnit) {
+                case 'fahrenheit':
+                    valueInCelsius = (value - 32) * 5/9;
+                    break;
+                case 'kelvin':
+                    valueInCelsius = value - 273.15;
+                    break;
+            }
+            
+            // Convert from Celsius to target unit
+            let result = valueInCelsius;
+            
+            switch(toUnit) {
+                case 'fahrenheit':
+                    result = (valueInCelsius * 9/5) + 32;
+                    break;
+                case 'kelvin':
+                    result = valueInCelsius + 273.15;
+                    break;
+            }
+            
+            const fromLabel = getUnitLabel(fromUnit);
+            const toLabel = getUnitLabel(toUnit);
+            
+            tempResult.textContent = `${value} ${fromLabel} = ${result.toFixed(2)} ${toLabel}`;
+            tempLabel.textContent = `Konversi ${fromLabel} ke ${toLabel}`;
+        }
+
+        function getUnitLabel(unit) {
+            const labels = {
+                'meter': 'm',
+                'kilometer': 'km',
+                'centimeter': 'cm',
+                'millimeter': 'mm',
+                'mile': 'mi',
+                'yard': 'yd',
+                'foot': 'ft',
+                'inch': 'in',
+                'celsius': '°C',
+                'fahrenheit': '°F',
+                'kelvin': 'K'
+            };
+            return labels[unit] || unit;
+        }
+
+        function resetCalculator() {
+            currentDisplay = '0';
+            previousValue = null;
+            currentOperator = null;
+            waitingForNewValue = false;
+            updateDisplay();
+            historyDisplay.textContent = '';
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('calculatorMemory', memoryValue);
+            localStorage.setItem('calculatorHistory', JSON.stringify(calculationHistory));
+        }
+
+        function loadFromLocalStorage() {
+            const savedMemory = localStorage.getItem('calculatorMemory');
+            const savedHistory = localStorage.getItem('calculatorHistory');
+            
+            if (savedMemory) {
+                memoryValue = parseFloat(savedMemory);
+                memoryStored = memoryValue !== 0;
+            }
+            
+            if (savedHistory) {
+                calculationHistory = JSON.parse(savedHistory);
+            }
+        }
+    </script>
+</body>
+</html>
